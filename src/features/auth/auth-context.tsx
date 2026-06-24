@@ -28,16 +28,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Cold-start: hydrate tokens from the keychain once.
   useEffect(() => {
     (async () => {
-      let tokens = await hydrateTokens();
       // Dev-only shortcut: seed a session from EXPO_PUBLIC_DEV_TOKENS so authed screens can
-      // be opened without typing an OTP in the simulator. Unset in normal runs → no effect.
-      if (!tokens && __DEV__ && process.env.EXPO_PUBLIC_DEV_TOKENS) {
+      // be opened without typing an OTP in the simulator. When set, it OVERRIDES any stored
+      // session (lets us switch dev users/roles). Unset in normal runs → no effect.
+      let tokens = null as Awaited<ReturnType<typeof hydrateTokens>>;
+      if (__DEV__ && process.env.EXPO_PUBLIC_DEV_TOKENS) {
         try {
           const t = JSON.parse(process.env.EXPO_PUBLIC_DEV_TOKENS);
           await setSession({ accessToken: t.access_token, refreshToken: t.refresh_token });
           tokens = { accessToken: t.access_token, refreshToken: t.refresh_token };
         } catch {}
       }
+      if (!tokens) tokens = await hydrateTokens();
       setStatus(tokens ? 'authenticated' : 'unauthenticated');
     })();
   }, []);

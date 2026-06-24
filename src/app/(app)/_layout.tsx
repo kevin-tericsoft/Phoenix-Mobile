@@ -43,6 +43,7 @@ export default function AppLayout() {
       <Tabs.Screen name="polls" options={{ href: null }} />
       <Tabs.Screen name="visitors" options={{ href: null }} />
       <Tabs.Screen name="parcels" options={{ href: null }} />
+      <Tabs.Screen name="gate" options={{ href: null }} />
     </Tabs>
   );
 }

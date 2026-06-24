@@ -70,7 +70,25 @@ export default function HomeScreen() {
         </GradientHeader>
 
         <View style={styles.body}>
-          <AppText variant="h2" style={{ marginBottom: spacing.md }}>
+          {/* Security staff get a prominent gate shortcut. */}
+          {me.data?.role?.code === 'security' ? (
+            <FadeInView>
+              <Link href="/gate" asChild>
+                <PressableScale style={styles.gateCard}>
+                  <LinearGradient colors={['#0A2A4D', '#0063CC']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.gateInner}>
+                    <AppText style={{ fontSize: 30 }}>🛡️</AppText>
+                    <View style={{ flex: 1 }}>
+                      <AppText variant="h2" color={palette.white}>Gate check-in</AppText>
+                      <AppText variant="caption" color="#DCEBFF">Scan or enter a visit code</AppText>
+                    </View>
+                    <AppText variant="title" color={palette.white}>›</AppText>
+                  </LinearGradient>
+                </PressableScale>
+              </Link>
+            </FadeInView>
+          ) : null}
+
+          <AppText variant="h2" style={{ marginBottom: spacing.md, marginTop: me.data?.role?.code === 'security' ? spacing.lg : 0 }}>
             Explore
           </AppText>
           <View style={styles.grid}>
@@ -119,4 +137,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   tileEmoji: { fontSize: 30 },
+  gateCard: { borderRadius: radius.lg, ...elevation.raised },
+  gateInner: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, borderRadius: radius.lg, padding: spacing.lg },
 });

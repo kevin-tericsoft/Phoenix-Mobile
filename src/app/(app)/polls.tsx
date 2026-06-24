@@ -1,8 +1,16 @@
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 
-import { AppText, FadeInView, GradientHeader, PressableScale } from '@/components/ui';
+import { AppText, FadeInView, GradientHeader } from '@/components/ui';
+import { PollInput } from '@/features/polls/PollInput';
 import { useMyPolls, useVotePoll, type MyPoll } from '@/features/polls/queries';
 import { elevation, palette, radius, spacing } from '@/theme';
+
+const TYPE_LABEL: Record<string, string> = {
+  single_select: 'Pick one',
+  multi_select: 'Pick any',
+  rating: 'Rate',
+  slider: 'Slide to answer',
+};
 
 export default function PollsScreen() {
   const polls = useMyPolls();
@@ -40,34 +48,25 @@ export default function PollsScreen() {
 
 function PollCard({ poll }: { poll: MyPoll }) {
   const vote = useVotePoll();
-  const selected = new Set(poll.my_option_ids);
-
   return (
     <View style={styles.card}>
+      <View style={styles.typeChip}>
+        <AppText variant="caption" color={palette.brand600}>
+          {TYPE_LABEL[poll.answer_type] ?? 'Poll'}
+        </AppText>
+      </View>
       <AppText variant="h2">{poll.question}</AppText>
       {poll.has_responded ? (
         <AppText variant="label" color={palette.success}>
           ✓ You voted
         </AppText>
       ) : null}
-      <View style={{ gap: spacing.sm, marginTop: spacing.xs }}>
-        {poll.options.map((opt) => {
-          const isSel = selected.has(opt.id);
-          return (
-            <PressableScale
-              key={opt.id}
-              disabled={vote.isPending}
-              haptic
-              onPress={() => vote.mutate({ pollId: poll.id, optionIds: [opt.id] })}
-              style={[styles.option, isSel && styles.optionSel]}
-            >
-              <View style={[styles.radio, isSel && styles.radioSel]} />
-              <AppText variant="h3" color={isSel ? palette.brand600 : palette.ink700}>
-                {opt.title}
-              </AppText>
-            </PressableScale>
-          );
-        })}
+      <View style={{ marginTop: spacing.xs }}>
+        <PollInput
+          poll={poll}
+          pending={vote.isPending}
+          onVote={(optionIds) => vote.mutate({ pollId: poll.id, optionIds })}
+        />
       </View>
     </View>
   );
@@ -78,16 +77,5 @@ const styles = StyleSheet.create({
   list: { padding: spacing.lg, gap: spacing.md },
   empty: { textAlign: 'center', marginTop: spacing.xxxl },
   card: { backgroundColor: palette.surface, borderRadius: radius.lg, padding: spacing.xl, gap: spacing.md, ...elevation.card },
-  option: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    padding: spacing.lg,
-    borderRadius: radius.md,
-    borderWidth: 1.5,
-    borderColor: palette.ink100,
-  },
-  optionSel: { borderColor: palette.brand500, backgroundColor: palette.brand50 },
-  radio: { width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: palette.ink200 },
-  radioSel: { borderColor: palette.brand500, backgroundColor: palette.brand500 },
+  typeChip: { alignSelf: 'flex-start', backgroundColor: palette.brand50, borderRadius: radius.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.xs },
 });
