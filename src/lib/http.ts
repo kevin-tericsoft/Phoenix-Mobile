@@ -85,11 +85,15 @@ async function refreshAccessToken(): Promise<boolean> {
 
 // ── auth-aware fetch ──────────────────────────────────────────────────────────
 const authFetch: typeof fetch = async (input, init) => {
-  const url = typeof input === 'string' ? input : input.toString();
+  // openapi-fetch passes a Request object (not a URL string) — extract the URL from it.
+  const url = typeof input === 'string' ? input : (input as Request).url;
   const isAuthEndpoint = url.includes('/auth/refresh') || url.includes('/auth/otp');
 
   const withAuth = (token: string | null): RequestInit => {
-    const headers = new Headers(init?.headers);
+    // When input is a Request, init is undefined/empty so headers come from the Request itself.
+    // We must copy them here or Content-Type gets wiped, breaking body parsing on the server.
+    const baseHeaders = init?.headers ?? (input instanceof Request ? input.headers : undefined);
+    const headers = new Headers(baseHeaders);
     if (token && !isAuthEndpoint) headers.set('Authorization', `Bearer ${token}`);
     return { ...init, headers };
   };

@@ -17,10 +17,13 @@ export type UserMe = components['schemas']['UserMeOut'];
 export function useRequestOtp() {
   return useMutation({
     mutationFn: async (email: string) => {
-      const { data, error } = await api.POST('/shared/v1/auth/otp/request', {
+      const { data, error, response } = await api.POST('/shared/v1/auth/otp/request', {
         body: { email },
       });
-      if (error) throw error;
+      if (error) {
+        console.error('OTP 422 detail:', response.status, JSON.stringify(error));
+        throw error;
+      }
       return data;
     },
   });
