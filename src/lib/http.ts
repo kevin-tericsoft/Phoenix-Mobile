@@ -38,10 +38,18 @@ export async function setSession(tokens: TokenPair): Promise<void> {
   await saveTokens(tokens);
 }
 
+// Notifies the app (auth context) when the session can't be recovered, so the UI can
+// redirect to sign-in instead of sitting on authed screens making unauthorized calls.
+let onSessionExpired: (() => void) | null = null;
+export function setOnSessionExpired(cb: (() => void) | null): void {
+  onSessionExpired = cb;
+}
+
 export async function clearSession(): Promise<void> {
   access = null;
   refresh = null;
   await clearTokens();
+  onSessionExpired?.();
 }
 
 // ── single-flight refresh ───────────────────────────────────────────────────────

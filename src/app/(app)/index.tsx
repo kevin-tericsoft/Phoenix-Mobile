@@ -5,7 +5,7 @@ import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 import { AppText, FadeInView, GlassSurface, GradientHeader, PressableScale } from '@/components/ui';
 import { useAuth } from '@/features/auth/auth-context';
 import { useMe } from '@/features/auth/queries';
-import { useUnreadCount } from '@/features/notifications/queries';
+import { useMyNotifications, useUnreadCount } from '@/features/notifications/queries';
 import { useMyVisits } from '@/features/visitors/queries';
 import { elevation, gradients, palette, radius, spacing } from '@/theme';
 
@@ -28,6 +28,8 @@ export default function HomeScreen() {
   const me = useMe(status === 'authenticated');
   const unread = useUnreadCount();
   const visits = useMyVisits();
+  const notifications = useMyNotifications();
+  const recent = (notifications.data?.data ?? []).slice(0, 3);
 
   const upcomingVisits = (visits.data ?? []).filter(
     (v) => v.status === 'pending' || v.status === 'approved',
@@ -107,6 +109,27 @@ export default function HomeScreen() {
               </FadeInView>
             ))}
           </View>
+
+          {recent.length > 0 ? (
+            <View style={{ marginTop: spacing.xl }}>
+              <View style={styles.recentHead}>
+                <AppText variant="h2">Recent</AppText>
+                <Link href="/notifications" asChild>
+                  <PressableScale haptic={false}><AppText variant="label" color={palette.brand500}>See all</AppText></PressableScale>
+                </Link>
+              </View>
+              {recent.map((n, i) => (
+                <FadeInView key={n.id} index={i}>
+                  <Link href="/notifications" asChild>
+                    <PressableScale style={styles.announce}>
+                      <View style={[styles.announceDot, { backgroundColor: n.status !== 'read' ? palette.brand500 : palette.ink200 }]} />
+                      <AppText variant="body" color={palette.ink700} numberOfLines={2} style={{ flex: 1 }}>{n.message}</AppText>
+                    </PressableScale>
+                  </Link>
+                </FadeInView>
+              ))}
+            </View>
+          ) : null}
         </View>
       </ScrollView>
     </View>
@@ -139,4 +162,8 @@ const styles = StyleSheet.create({
   tileEmoji: { fontSize: 30 },
   gateCard: { borderRadius: radius.lg, ...elevation.raised },
   gateInner: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, borderRadius: radius.lg, padding: spacing.lg },
+  recentHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.md },
+  announce: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: palette.surface, borderRadius: radius.md, padding: spacing.lg, marginBottom: spacing.sm, ...elevation.card },
+  announceDot: { width: 8, height: 8, borderRadius: 4 },
 });
+

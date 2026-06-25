@@ -1,6 +1,6 @@
 import { createContext, use, useEffect, useState, type ReactNode } from 'react';
 
-import { clearSession, hydrateTokens, setSession } from '@/lib/http';
+import { clearSession, hydrateTokens, setOnSessionExpired, setSession } from '@/lib/http';
 import type { TokenPair } from '@/lib/secure-store';
 
 /**
@@ -42,6 +42,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!tokens) tokens = await hydrateTokens();
       setStatus(tokens ? 'authenticated' : 'unauthenticated');
     })();
+
+    // When a refresh fails irrecoverably, bounce to sign-in.
+    setOnSessionExpired(() => setStatus('unauthenticated'));
+    return () => setOnSessionExpired(null);
   }, []);
 
   async function signIn(tokens: TokenPair) {

@@ -3,6 +3,18 @@
 Tracks each feature domain from `Converz-Customer-Reactnative` as it is ported. Old app has
 **69 screens** across 11 domains.
 
+## Full-parity push (2026-06-25)
+Second pass to reach feature parity with the old app across all domains:
+- **Polls** — all four answer types ported (single/multi-select, rating stars/emoji, slider) via `PollInput`.
+- **Events** — detail screen (agenda, FAQs, performers, gallery) + `/shared/v1/events/{id}`.
+- **Profile** — Digital ID card (QR of user_code, `react-native-qrcode-svg`) + 2-step delete-account flow + `DELETE /shared/v1/auth/me`.
+- **Feedback** — `POST /shared/v1/feedback` + feedback screen (from profile).
+- **VMS (flagship)** — security gate check-in/out across backend + mobile + admin-UI: `lookup/{code}`, `gate/queue`, `gate/approve|check-in|check-out` (RequireSecurity); mobile Gate screen (queue, code lookup, QR scan via expo-camera, lifecycle card); role-gated Home gate card. Resident invites → security validates code → check in → check out. Verified end-to-end.
+- **Parcels** — resident pre-register (`POST /shared/v1/parcels`) + create modal + FAB.
+- **Home** — Recent announcements section (latest notifications).
+- **Onboarding** — N/A by design: property/tenant are admin-assigned (shown in profile), not self-selected; sign-in is the welcome.
+- **Walls interactions** — reaction counts surfaced on each post (the old InteractionsComponent).
+
 ## Status summary (2026-06-24)
 **All 8 customer feature domains have a working `/shared` API + a mobile screen validated on
 the iOS Simulator:** auth, notifications, polls, walls (Community), events, amenities,

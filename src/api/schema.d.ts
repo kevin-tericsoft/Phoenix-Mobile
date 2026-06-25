@@ -78,7 +78,8 @@ export interface paths {
         get: operations["get_me_shared_v1_auth_me_get"];
         put?: never;
         post?: never;
-        delete?: never;
+        /** Delete My Account */
+        delete: operations["delete_my_account_shared_v1_auth_me_delete"];
         options?: never;
         head?: never;
         /** Update My Profile */
@@ -560,6 +561,23 @@ export interface paths {
         put?: never;
         /** Create Feedback */
         post: operations["create_feedback_admin_v1_tenants__tenant_id__feedbacks_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shared/v1/feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Submit My Feedback */
+        post: operations["submit_my_feedback_shared_v1_feedback_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1752,6 +1770,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/shared/v1/events/{event_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get My Event */
+        get: operations["get_my_event_shared_v1_events__event_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/shared/v1/events/{event_id}/interest": {
         parameters: {
             query?: never;
@@ -2279,7 +2314,8 @@ export interface paths {
         /** List My Parcels */
         get: operations["list_my_parcels_shared_v1_parcels_get"];
         put?: never;
-        post?: never;
+        /** Create My Parcel */
+        post: operations["create_my_parcel_shared_v1_parcels_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3444,6 +3480,11 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+        };
+        /** DeleteAccountIn */
+        DeleteAccountIn: {
+            /** Reason */
+            reason?: string | null;
         };
         /** EInvoiceCancelIn */
         EInvoiceCancelIn: {
@@ -4942,6 +4983,50 @@ export interface components {
             /** Review Count */
             review_count: number;
         };
+        /** MyEventDetailOut */
+        MyEventDetailOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Category */
+            category: string;
+            /** Description */
+            description: string;
+            /**
+             * Event Date
+             * Format: date
+             */
+            event_date: string;
+            /**
+             * Start Time
+             * Format: time
+             */
+            start_time: string;
+            /** Duration Minutes */
+            duration_minutes: number;
+            /** Status */
+            status: string;
+            /** Is Booking Required */
+            is_booking_required: boolean;
+            /** I Am Interested */
+            i_am_interested: boolean;
+            /** Interested Count */
+            interested_count: number;
+            /** Agenda */
+            agenda: string | null;
+            /** Terms And Conditions */
+            terms_and_conditions: string | null;
+            /** Faqs */
+            faqs: components["schemas"]["EventFaqOut"][];
+            /** Performers */
+            performers: components["schemas"]["EventPerformerOut"][];
+            /** Gallery */
+            gallery: components["schemas"]["EventGalleryImageOut"][];
+        };
         /**
          * MyEventOut
          * @description An event as the customer sees it + whether I'm interested + interested count.
@@ -4979,6 +5064,11 @@ export interface components {
             /** Interested Count */
             interested_count: number;
         };
+        /** MyFeedbackIn */
+        MyFeedbackIn: {
+            /** Feedback */
+            feedback: string;
+        };
         /**
          * MyNotificationOut
          * @description A notification as seen by its recipient — body + this user's read state.
@@ -5010,6 +5100,20 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+        };
+        /**
+         * MyParcelCreate
+         * @description A resident pre-registers an expected parcel.
+         */
+        MyParcelCreate: {
+            /** Delivery Company */
+            delivery_company: string;
+            /** Parcel Type */
+            parcel_type?: string | null;
+            /** Quantity */
+            quantity?: number | null;
+            /** Expected Date */
+            expected_date?: string | null;
         };
         /**
          * MyParcelOut
@@ -7382,6 +7486,37 @@ export interface operations {
             };
         };
     };
+    delete_my_account_shared_v1_auth_me_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteAccountIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     update_my_profile_shared_v1_auth_me_patch: {
         parameters: {
             query?: never;
@@ -8971,6 +9106,39 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["TenantFeedbackCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TenantFeedbackOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submit_my_feedback_shared_v1_feedback_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MyFeedbackIn"];
             };
         };
         responses: {
@@ -12170,6 +12338,37 @@ export interface operations {
             };
         };
     };
+    get_my_event_shared_v1_events__event_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                event_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MyEventDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     set_event_interest_shared_v1_events__event_id__interest_put: {
         parameters: {
             query?: never;
@@ -13357,6 +13556,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PageOut_MyParcelOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_my_parcel_shared_v1_parcels_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MyParcelCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MyParcelOut"];
                 };
             };
             /** @description Validation Error */

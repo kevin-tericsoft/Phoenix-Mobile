@@ -4,8 +4,26 @@ import type { components } from '@/api/schema';
 import { api } from '@/lib/http';
 
 export type MyEvent = components['schemas']['MyEventOut'];
+export type MyEventDetail = components['schemas']['MyEventDetailOut'];
 
-const KEYS = { list: ['events', 'list'] as const };
+const KEYS = {
+  list: ['events', 'list'] as const,
+  detail: (id: string) => ['events', 'detail', id] as const,
+};
+
+/** GET /shared/v1/events/{id} — detail with agenda, FAQs, performers, gallery. */
+export function useEventDetail(id: string) {
+  return useQuery({
+    queryKey: KEYS.detail(id),
+    queryFn: async () => {
+      const { data, error } = await api.GET('/shared/v1/events/{event_id}', {
+        params: { path: { event_id: id } },
+      });
+      if (error) throw error;
+      return data;
+    },
+  });
+}
 
 /** GET /shared/v1/events — upcoming events for my property, with my interest + counts. */
 export function useMyEvents() {

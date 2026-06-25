@@ -9,6 +9,8 @@ import {
   View,
 } from 'react-native';
 
+import { Link } from 'expo-router';
+
 import { AppText, FadeInView, GradientHeader, PressableScale } from '@/components/ui';
 import { useAuth } from '@/features/auth/auth-context';
 import { useMe } from '@/features/auth/queries';
@@ -91,14 +93,37 @@ export default function ProfileScreen() {
                 <Row label="User code" value={u.user_code} />
               </FadeInView>
               <FadeInView index={1}>
+                <Link href="/profile/virtual-id" asChild>
+                  <PressableScale style={styles.linkRow}>
+                    <AppText variant="h3">🆔  Digital ID</AppText>
+                    <AppText variant="h3" color={palette.ink200}>›</AppText>
+                  </PressableScale>
+                </Link>
+              </FadeInView>
+              <FadeInView index={1}>
+                <Link href="/feedback" asChild>
+                  <PressableScale style={styles.linkRow}>
+                    <AppText variant="h3">💬  Send feedback</AppText>
+                    <AppText variant="h3" color={palette.ink200}>›</AppText>
+                  </PressableScale>
+                </Link>
+              </FadeInView>
+              <FadeInView index={2}>
                 <PressableScale onPress={startEdit} style={styles.button}>
                   <AppText variant="h3" color={palette.white}>Edit profile</AppText>
                 </PressableScale>
               </FadeInView>
-              <FadeInView index={2}>
+              <FadeInView index={3}>
                 <PressableScale onPress={signOut} haptic={false} style={styles.ghost}>
                   <AppText variant="label" color={palette.danger}>Sign out</AppText>
                 </PressableScale>
+              </FadeInView>
+              <FadeInView index={4}>
+                <Link href="/profile/delete-account" asChild>
+                  <PressableScale haptic={false} style={styles.ghost}>
+                    <AppText variant="caption" color={palette.ink300}>Delete account</AppText>
+                  </PressableScale>
+                </Link>
               </FadeInView>
             </>
           )}
@@ -136,6 +161,7 @@ const styles = StyleSheet.create({
     borderWidth: 2, borderColor: '#FFFFFF55',
   },
   card: { backgroundColor: palette.surface, borderRadius: radius.lg, padding: spacing.xl, gap: spacing.md, ...elevation.card },
+  linkRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: palette.surface, borderRadius: radius.lg, padding: spacing.lg, ...elevation.card },
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   input: { borderWidth: 1, borderColor: palette.ink100, backgroundColor: palette.canvas, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, fontSize: 16, color: palette.ink900, ...font('500') },
   button: { backgroundColor: palette.brand500, borderRadius: radius.md, paddingVertical: spacing.lg, alignItems: 'center', ...elevation.brandGlow },
