@@ -13,8 +13,9 @@ export default function GateLayout() {
         contentStyle: { backgroundColor: palette.canvas },
       }}
     >
-      <Stack.Screen name="index" options={{ title: 'Gate' }} />
+      <Stack.Screen name="index" options={{ title: 'Gate — Visitors' }} />
       <Stack.Screen name="scan" options={{ title: 'Scan code', presentation: 'modal' }} />
+      <Stack.Screen name="parcels" options={{ title: 'Gate — Parcels' }} />
     </Stack>
   );
 }

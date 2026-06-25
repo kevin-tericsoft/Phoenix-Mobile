@@ -53,6 +53,10 @@ export default function GateScreen() {
         </PressableScale>
       </View>
 
+      <PressableScale haptic={false} onPress={() => router.push('/gate/parcels')} style={styles.parcelsLink}>
+        <AppText variant="label" color={palette.brand600}>📦  Parcel reception →</AppText>
+      </PressableScale>
+
       {lookup.isError ? (
         <AppText variant="caption" color={palette.danger} style={{ paddingHorizontal: spacing.lg }}>
           No visit found for that code.
@@ -106,6 +110,7 @@ const styles = StyleSheet.create({
   input: { flex: 1, borderWidth: 1, borderColor: palette.ink100, backgroundColor: palette.surface, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, fontSize: 16, letterSpacing: 2, color: palette.ink900, ...font('600') },
   lookupBtn: { backgroundColor: palette.brand500, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, minWidth: 56, alignItems: 'center' },
   scanBtn: { backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.ink100, borderRadius: radius.md, padding: spacing.md },
+  parcelsLink: { alignSelf: 'flex-start', marginHorizontal: spacing.lg, marginBottom: spacing.sm, backgroundColor: palette.brand50, borderRadius: radius.pill, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
   filters: { flexDirection: 'row', gap: spacing.sm, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
   chip: { paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radius.pill, backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.ink100 },
   chipActive: { backgroundColor: palette.brand500, borderColor: palette.brand500 },
