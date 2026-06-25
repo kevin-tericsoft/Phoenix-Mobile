@@ -5,6 +5,7 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   StyleSheet,
   TextInput,
   View,
@@ -16,20 +17,38 @@ import { useRequestOtp } from '@/features/auth/queries';
 import { font, gradients, palette, radius, spacing } from '@/theme';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_RE = /^\d{10}$/;
 
-/** Step 1 of login — Aurora: gradient canvas, brand mark, glassy input, springy CTA. */
+type Mode = 'email' | 'phone';
+
 export default function SignInScreen() {
   const insets = useSafeAreaInsets();
+  const [mode, setMode] = useState<Mode>('phone');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const requestOtp = useRequestOtp();
-  const valid = EMAIL_RE.test(email);
+
+  const valid = mode === 'email' ? EMAIL_RE.test(email) : PHONE_RE.test(phone);
 
   async function onSubmit() {
     if (!valid) return;
     try {
-      await requestOtp.mutateAsync(email);
-      router.push({ pathname: '/(auth)/verify', params: { email } });
+      if (mode === 'phone') {
+        const e164 = `+91${phone}`;
+        await requestOtp.mutateAsync({ phone: e164 });
+        router.push({ pathname: '/(auth)/verify', params: { phone: e164 } });
+      } else {
+        await requestOtp.mutateAsync({ email });
+        router.push({ pathname: '/(auth)/verify', params: { email } });
+      }
     } catch {}
+  }
+
+  function switchMode(next: Mode) {
+    setMode(next);
+    setEmail('');
+    setPhone('');
+    requestOtp.reset();
   }
 
   return (
@@ -54,22 +73,70 @@ export default function SignInScreen() {
           </FadeInView>
 
           <FadeInView index={2} style={styles.card}>
-            <AppText variant="label" color={palette.ink500}>
-              EMAIL
-            </AppText>
-            <TextInput
-              style={styles.input}
-              placeholder="you@example.com"
-              placeholderTextColor={palette.ink300}
-              autoCapitalize="none"
-              autoComplete="email"
-              keyboardType="email-address"
-              inputMode="email"
-              value={email}
-              onChangeText={setEmail}
-              onSubmitEditing={onSubmit}
-              returnKeyType="go"
-            />
+            {/* Mode toggle */}
+            <View style={styles.tabs}>
+              {(['phone', 'email'] as Mode[]).map((m) => (
+                <Pressable
+                  key={m}
+                  style={[styles.tab, mode === m && styles.tabActive]}
+                  onPress={() => switchMode(m)}
+                >
+                  <AppText
+                    variant="label"
+                    color={mode === m ? palette.brand500 : palette.ink400}
+                  >
+                    {m === 'phone' ? 'Phone' : 'Email'}
+                  </AppText>
+                </Pressable>
+              ))}
+            </View>
+
+            {mode === 'phone' ? (
+              <>
+                <AppText variant="label" color={palette.ink500} style={{ marginTop: spacing.xs }}>
+                  MOBILE NUMBER
+                </AppText>
+                <View style={styles.phoneRow}>
+                  <View style={styles.prefix}>
+                    <AppText variant="body" color={palette.ink700} style={font('600')}>
+                      +91
+                    </AppText>
+                  </View>
+                  <TextInput
+                    style={[styles.input, styles.phoneInput]}
+                    placeholder="9876543210"
+                    placeholderTextColor={palette.ink300}
+                    keyboardType="number-pad"
+                    inputMode="numeric"
+                    maxLength={10}
+                    value={phone}
+                    onChangeText={(t) => setPhone(t.replace(/\D/g, ''))}
+                    onSubmitEditing={onSubmit}
+                    returnKeyType="go"
+                  />
+                </View>
+              </>
+            ) : (
+              <>
+                <AppText variant="label" color={palette.ink500} style={{ marginTop: spacing.xs }}>
+                  EMAIL
+                </AppText>
+                <TextInput
+                  style={styles.input}
+                  placeholder="you@example.com"
+                  placeholderTextColor={palette.ink300}
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  keyboardType="email-address"
+                  inputMode="email"
+                  value={email}
+                  onChangeText={setEmail}
+                  onSubmitEditing={onSubmit}
+                  returnKeyType="go"
+                />
+              </>
+            )}
+
             {requestOtp.isError ? (
               <AppText variant="caption" color={palette.danger} style={{ marginTop: spacing.xs }}>
                 Couldn&apos;t send the code. Try again.
@@ -125,6 +192,40 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 16 },
     elevation: 10,
   },
+  tabs: {
+    flexDirection: 'row',
+    borderRadius: radius.md,
+    backgroundColor: palette.canvas,
+    padding: 3,
+    marginBottom: spacing.xs,
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: spacing.sm,
+    alignItems: 'center',
+    borderRadius: radius.sm,
+  },
+  tabActive: {
+    backgroundColor: palette.white,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 2,
+  },
+  phoneRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    marginTop: spacing.xs,
+  },
+  prefix: {
+    borderWidth: 1,
+    borderColor: palette.ink100,
+    backgroundColor: palette.canvas,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    justifyContent: 'center',
+  },
   input: {
     borderWidth: 1,
     borderColor: palette.ink100,
@@ -136,6 +237,10 @@ const styles = StyleSheet.create({
     color: palette.ink900,
     ...font('500'),
     marginTop: spacing.xs,
+  },
+  phoneInput: {
+    flex: 1,
+    marginTop: 0,
   },
   button: {
     backgroundColor: palette.brand500,

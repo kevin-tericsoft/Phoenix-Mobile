@@ -5,6 +5,9 @@ import { api } from '@/lib/http';
 
 export type UserMe = components['schemas']['UserMeOut'];
 
+// Either email or phone, never both.
+export type OtpIdentifier = { email: string; phone?: never } | { phone: string; email?: never };
+
 /**
  * Auth API hooks, typed end-to-end against the OpenAPI schema.
  *
@@ -13,12 +16,12 @@ export type UserMe = components['schemas']['UserMeOut'];
  * (loading/error/data) into the hook, and `openapi-fetch` collapses the request typing.
  */
 
-/** POST /shared/v1/auth/otp/request — send an OTP to the given email. */
+/** POST /shared/v1/auth/otp/request — send an OTP to the given email or phone. */
 export function useRequestOtp() {
   return useMutation({
-    mutationFn: async (email: string) => {
+    mutationFn: async (identifier: OtpIdentifier) => {
       const { data, error, response } = await api.POST('/shared/v1/auth/otp/request', {
-        body: { email },
+        body: identifier,
       });
       if (error) {
         console.error('OTP 422 detail:', response.status, JSON.stringify(error));
@@ -32,9 +35,9 @@ export function useRequestOtp() {
 /** POST /shared/v1/auth/otp/verify — verify OTP, returns access + refresh tokens. */
 export function useVerifyOtp() {
   return useMutation({
-    mutationFn: async (vars: { email: string; otp: string }) => {
+    mutationFn: async (vars: OtpIdentifier & { otp: string }) => {
       const { data, error } = await api.POST('/shared/v1/auth/otp/verify', {
-        body: { email: vars.email, otp: vars.otp },
+        body: vars,
       });
       if (error) throw error;
       return data; // { access_token, refresh_token, token_type }

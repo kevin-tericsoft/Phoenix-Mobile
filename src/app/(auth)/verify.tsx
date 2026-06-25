@@ -11,10 +11,14 @@ import { font, gradients, palette, radius, spacing } from '@/theme';
 
 const OTP_LENGTH = 6;
 
-/** Step 2 — Aurora: gradient canvas, boxed OTP cells, springy verify. */
 export default function VerifyScreen() {
   const insets = useSafeAreaInsets();
-  const { email } = useLocalSearchParams<{ email: string }>();
+  const { email, phone } = useLocalSearchParams<{ email?: string; phone?: string }>();
+  const identifier = phone ? { phone } : { email: email! };
+  const displayLabel = phone
+    ? phone.replace(/^\+91(\d{5})(\d{5})$/, '+91 $1 $2')
+    : email;
+
   const [otp, setOtp] = useState('');
   const verifyOtp = useVerifyOtp();
   const requestOtp = useRequestOtp();
@@ -22,10 +26,10 @@ export default function VerifyScreen() {
   const complete = otp.length === OTP_LENGTH;
 
   async function onVerify() {
-    if (!complete || !email) return;
+    if (!complete) return;
     try {
-      const tokens = await verifyOtp.mutateAsync({ email, otp });
-      await signIn({ accessToken: tokens.access_token, refreshToken: tokens.refresh_token });
+      const tokens = await verifyOtp.mutateAsync({ ...identifier, otp });
+      await signIn({ accessToken: tokens!.access_token, refreshToken: tokens!.refresh_token });
     } catch {}
   }
 
@@ -41,7 +45,7 @@ export default function VerifyScreen() {
         <FadeInView index={1} style={styles.card}>
           <AppText variant="title">Enter code</AppText>
           <AppText variant="body" color={palette.ink400} style={{ marginTop: 2 }}>
-            Sent to {email}
+            Sent to {displayLabel}
           </AppText>
 
           {/* boxed OTP display synced to a hidden input */}
@@ -83,7 +87,10 @@ export default function VerifyScreen() {
             )}
           </PressableScale>
 
-          <Pressable onPress={() => email && requestOtp.mutate(email)} disabled={requestOtp.isPending}>
+          <Pressable
+            onPress={() => requestOtp.mutate(identifier)}
+            disabled={requestOtp.isPending}
+          >
             <AppText variant="label" color={palette.brand500} style={{ textAlign: 'center', marginTop: spacing.sm }}>
               {requestOtp.isPending ? 'Sending…' : 'Resend code'}
             </AppText>

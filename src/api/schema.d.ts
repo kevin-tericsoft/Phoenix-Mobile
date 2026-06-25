@@ -5461,7 +5461,9 @@ export interface components {
              * Email
              * Format: email
              */
-            email: string;
+            email?: string | null;
+            /** Phone */
+            phone?: string | null;
         };
         /** OtpVerifyIn */
         OtpVerifyIn: {
@@ -5469,7 +5471,9 @@ export interface components {
              * Email
              * Format: email
              */
-            email: string;
+            email?: string | null;
+            /** Phone */
+            phone?: string | null;
             /** Otp */
             otp: string;
         };
