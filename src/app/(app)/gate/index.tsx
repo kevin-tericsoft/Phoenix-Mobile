@@ -1,8 +1,9 @@
+import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, TextInput, View } from 'react-native';
 
-import { AppText, FadeInView, PressableScale } from '@/components/ui';
+import { AppText, PressableScale } from '@/components/ui';
 import { GateVisitCard } from '@/features/gate/GateVisitCard';
 import { useGateQueue, useLookupVisit, type MyVisit } from '@/features/gate/queries';
 import { font, palette, radius, spacing } from '@/theme';
@@ -49,12 +50,16 @@ export default function GateScreen() {
           {lookup.isPending ? <ActivityIndicator color={palette.white} /> : <AppText variant="label" color={palette.white}>Find</AppText>}
         </PressableScale>
         <PressableScale onPress={() => router.push('/gate/scan')} style={styles.scanBtn}>
-          <AppText style={{ fontSize: 20 }}>📷</AppText>
+          <Ionicons name="camera-outline" size={20} color={palette.ink700} />
         </PressableScale>
       </View>
 
       <PressableScale haptic={false} onPress={() => router.push('/gate/parcels')} style={styles.parcelsLink}>
-        <AppText variant="label" color={palette.brand600}>📦  Parcel reception →</AppText>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
+          <Ionicons name="cube-outline" size={16} color={palette.brand600} />
+          <AppText variant="label" color={palette.brand600}>Parcel reception</AppText>
+          <Ionicons name="chevron-forward" size={14} color={palette.brand600} />
+        </View>
       </PressableScale>
 
       {lookup.isError ? (
@@ -93,11 +98,7 @@ export default function GateScreen() {
           keyExtractor={(v) => v.id}
           contentContainerStyle={styles.list}
           ListEmptyComponent={<AppText variant="body" color={palette.ink300} style={styles.empty}>No visits here.</AppText>}
-          renderItem={({ item, index }) => (
-            <FadeInView index={index}>
-              <GateVisitCard visit={item} />
-            </FadeInView>
-          )}
+          renderItem={({ item }) => <GateVisitCard visit={item} />}
         />
       )}
     </View>

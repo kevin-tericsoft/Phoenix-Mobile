@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText, PressableScale } from '@/components/ui';
@@ -63,7 +64,10 @@ export function GateVisitCard({ visit, onChanged }: { visit: MyVisit; onChanged?
         </PressableScale>
       ) : visit.status === 'approved' ? (
         <PressableScale onPress={() => run('gate/check-in')} disabled={action.isPending} style={[styles.btn, styles.btnSuccess]}>
-          <AppText variant="h3" color={palette.white}>✓ Check in</AppText>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
+            <Ionicons name="checkmark" size={18} color={palette.white} />
+            <AppText variant="h3" color={palette.white}>Check in</AppText>
+          </View>
         </PressableScale>
       ) : visit.status === 'checked_in' ? (
         <PressableScale onPress={() => run('gate/check-out')} disabled={action.isPending} style={[styles.btn, styles.btnInk]}>

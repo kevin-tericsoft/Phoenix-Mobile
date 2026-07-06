@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
 
-import { AppText, FadeInView, PressableScale } from '@/components/ui';
+import { AppText, PressableScale } from '@/components/ui';
 import { useGateParcelAction, useGateParcels, type MyParcel } from '@/features/gate/parcelQueries';
 import { elevation, palette, radius, spacing } from '@/theme';
 
@@ -32,11 +32,7 @@ export default function GateParcelsScreen() {
           keyExtractor={(p) => p.id}
           contentContainerStyle={styles.list}
           ListEmptyComponent={<AppText variant="body" color={palette.ink300} style={styles.empty}>No parcels here.</AppText>}
-          renderItem={({ item, index }) => (
-            <FadeInView index={index}>
-              <ParcelCard parcel={item} />
-            </FadeInView>
-          )}
+          renderItem={({ item }) => <ParcelCard parcel={item} />}
         />
       )}
     </View>

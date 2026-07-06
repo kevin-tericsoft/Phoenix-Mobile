@@ -1,7 +1,8 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 
-import { AppText, FadeInView, GradientHeader, PressableScale } from '@/components/ui';
+import { AppText, GradientHeader, PressableScale } from '@/components/ui';
 import { useMyParcels, type MyParcel } from '@/features/parcels/queries';
 import { elevation, palette, radius, spacing } from '@/theme';
 
@@ -32,11 +33,7 @@ export default function ParcelsScreen() {
           contentContainerStyle={styles.list}
           refreshControl={<RefreshControl refreshing={parcels.isFetching} onRefresh={() => parcels.refetch()} tintColor={palette.brand500} />}
           ListEmptyComponent={<AppText variant="body" color={palette.ink300} style={styles.empty}>No parcels.</AppText>}
-          renderItem={({ item, index }) => (
-            <FadeInView index={index}>
-              <Row item={item} />
-            </FadeInView>
-          )}
+          renderItem={({ item }) => <Row item={item} />}
         />
       )}
       <Link href="/parcels/new" asChild>
@@ -52,7 +49,7 @@ function Row({ item }: { item: MyParcel }) {
   return (
     <View style={styles.card}>
       <View style={styles.icon}>
-        <AppText style={{ fontSize: 22 }}>📦</AppText>
+        <Ionicons name="cube-outline" size={20} color={palette.brand500} />
       </View>
       <View style={{ flex: 1, gap: 2 }}>
         <AppText variant="h3">{item.delivery_company}</AppText>

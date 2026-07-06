@@ -1,16 +1,11 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
-import { Text } from 'react-native';
 
 import { useUnreadCount } from '@/features/notifications/queries';
 import { fontFamily, palette } from '@/theme';
 
-/** Tab icon as an emoji glyph (tinted via opacity for inactive). */
-function TabGlyph({ glyph, focused }: { glyph: string; focused: boolean }) {
-  return <Text style={{ fontSize: 22, opacity: focused ? 1 : 0.45 }}>{glyph}</Text>;
-}
-
 /**
- * Authenticated tab bar — Aurora-branded: brand-blue active tint, Sora labels, emoji glyphs.
+ * Authenticated tab bar — Aurora-branded: brand-blue active tint, Sora labels, Ionicons glyphs.
  * The notifications tab shows a live unread badge from TanStack Query.
  */
 export default function AppLayout() {
@@ -25,17 +20,17 @@ export default function AppLayout() {
         tabBarStyle: { borderTopColor: palette.ink100, backgroundColor: palette.surface },
       }}
     >
-      <Tabs.Screen name="index" options={{ title: 'Home', tabBarIcon: ({ focused }) => <TabGlyph glyph="🏠" focused={focused} /> }} />
-      <Tabs.Screen name="amenities" options={{ title: 'Amenities', tabBarIcon: ({ focused }) => <TabGlyph glyph="🏢" focused={focused} /> }} />
+      <Tabs.Screen name="index" options={{ title: 'Home', tabBarIcon: ({ focused, color }) => <Ionicons name={focused ? 'home' : 'home-outline'} size={22} color={color} /> }} />
+      <Tabs.Screen name="amenities" options={{ title: 'Amenities', tabBarIcon: ({ focused, color }) => <Ionicons name={focused ? 'business' : 'business-outline'} size={22} color={color} /> }} />
       <Tabs.Screen
         name="notifications"
         options={{
           title: 'Alerts',
-          tabBarIcon: ({ focused }) => <TabGlyph glyph="🔔" focused={focused} />,
+          tabBarIcon: ({ focused, color }) => <Ionicons name={focused ? 'notifications' : 'notifications-outline'} size={22} color={color} />,
           tabBarBadge: unread.data && unread.data > 0 ? unread.data : undefined,
         }}
       />
-      <Tabs.Screen name="profile" options={{ title: 'Profile', tabBarIcon: ({ focused }) => <TabGlyph glyph="👤" focused={focused} /> }} />
+      <Tabs.Screen name="profile" options={{ title: 'Profile', tabBarIcon: ({ focused, color }) => <Ionicons name={focused ? 'person' : 'person-outline'} size={22} color={color} /> }} />
       {/* Community moves to a Home tile to keep the tab bar at 4. */}
       <Tabs.Screen name="walls" options={{ href: null }} />
       {/* Routes reachable from the Home hub, hidden from the tab bar (href: null). */}

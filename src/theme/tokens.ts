@@ -104,10 +104,7 @@ export const elevation = {
 } as const;
 
 export const motion = {
-  // Reanimated spring presets.
+  // Spring preset for the press-scale tactile feedback (PressableScale).
   springSnappy: { damping: 18, stiffness: 220, mass: 0.7 },
-  springSoft: { damping: 20, stiffness: 140, mass: 0.9 },
   pressScale: 0.96,
-  durationFast: 180,
-  durationMed: 320,
 } as const;

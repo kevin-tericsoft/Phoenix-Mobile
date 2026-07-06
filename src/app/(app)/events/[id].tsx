@@ -1,7 +1,8 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 
-import { AppText, FadeInView, PressableScale } from '@/components/ui';
+import { AppText, PressableScale } from '@/components/ui';
 import { useEventDetail, useToggleInterest } from '@/features/events/queries';
 import { elevation, palette, radius, spacing } from '@/theme';
 
@@ -22,7 +23,7 @@ export default function EventDetailScreen() {
 
   return (
     <ScrollView style={styles.root} contentContainerStyle={styles.content}>
-      <FadeInView index={0}>
+      <View>
         <AppText variant="caption" color={palette.brand500} style={{ letterSpacing: 0.5 }}>{e.category.toUpperCase()}</AppText>
         <AppText variant="title">{e.name}</AppText>
         <View style={styles.metaCard}>
@@ -35,21 +36,24 @@ export default function EventDetailScreen() {
           onPress={() => toggle.mutate({ eventId: e.id, interested: !e.i_am_interested })}
           style={[styles.cta, e.i_am_interested ? styles.ctaOn : styles.ctaOff]}
         >
-          <AppText variant="h3" color={e.i_am_interested ? palette.white : palette.brand500}>
-            {e.i_am_interested ? "✓ You're interested" : "I'm interested"}
-          </AppText>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
+            {e.i_am_interested ? <Ionicons name="checkmark" size={18} color={palette.white} /> : null}
+            <AppText variant="h3" color={e.i_am_interested ? palette.white : palette.brand500}>
+              {e.i_am_interested ? "You're interested" : "I'm interested"}
+            </AppText>
+          </View>
         </PressableScale>
-      </FadeInView>
+      </View>
 
-      <FadeInView index={1}>
+      <View>
         <Section title="About">
           <AppText variant="body" color={palette.ink700}>{e.description}</AppText>
           {e.agenda ? <><AppText variant="h3" style={{ marginTop: spacing.md }}>Agenda</AppText><AppText variant="body" color={palette.ink400}>{e.agenda}</AppText></> : null}
         </Section>
-      </FadeInView>
+      </View>
 
       {e.performers.length > 0 ? (
-        <FadeInView index={2}>
+        <View>
           <Section title="Performers">
             {e.performers.map((p) => (
               <View key={p.id} style={styles.performer}>
@@ -61,11 +65,11 @@ export default function EventDetailScreen() {
               </View>
             ))}
           </Section>
-        </FadeInView>
+        </View>
       ) : null}
 
       {e.faqs.length > 0 ? (
-        <FadeInView index={3}>
+        <View>
           <Section title="FAQs">
             {e.faqs.map((f) => (
               <View key={f.id} style={{ gap: 2, marginBottom: spacing.sm }}>
@@ -74,15 +78,15 @@ export default function EventDetailScreen() {
               </View>
             ))}
           </Section>
-        </FadeInView>
+        </View>
       ) : null}
 
       {e.terms_and_conditions ? (
-        <FadeInView index={4}>
+        <View>
           <Section title="Terms & conditions">
             <AppText variant="caption" color={palette.ink400}>{e.terms_and_conditions}</AppText>
           </Section>
-        </FadeInView>
+        </View>
       ) : null}
     </ScrollView>
   );

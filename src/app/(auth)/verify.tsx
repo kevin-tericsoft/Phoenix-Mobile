@@ -1,10 +1,11 @@
+import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { AppText, FadeInView, PressableScale } from '@/components/ui';
+import { AppText, PressableScale } from '@/components/ui';
 import { useAuth } from '@/features/auth/auth-context';
 import { useRequestOtp, useVerifyOtp } from '@/features/auth/queries';
 import { font, gradients, palette, radius, spacing } from '@/theme';
@@ -36,13 +37,14 @@ export default function VerifyScreen() {
   return (
     <LinearGradient colors={gradients.hero} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.root}>
       <View style={[styles.body, { paddingTop: insets.top + spacing.xxl }]}>
-        <Pressable onPress={() => router.back()} hitSlop={12}>
+        <Pressable onPress={() => router.back()} hitSlop={12} style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
+          <Ionicons name="chevron-back" size={18} color={palette.white} />
           <AppText variant="h3" color={palette.white}>
-            ← Back
+            Back
           </AppText>
         </Pressable>
 
-        <FadeInView index={1} style={styles.card}>
+        <View style={styles.card}>
           <AppText variant="title">Enter code</AppText>
           <AppText variant="body" color={palette.ink400} style={{ marginTop: 2 }}>
             Sent to {displayLabel}
@@ -95,7 +97,7 @@ export default function VerifyScreen() {
               {requestOtp.isPending ? 'Sending…' : 'Resend code'}
             </AppText>
           </Pressable>
-        </FadeInView>
+        </View>
       </View>
     </LinearGradient>
   );

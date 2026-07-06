@@ -1,7 +1,7 @@
 import { Link } from 'expo-router';
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 
-import { AppText, FadeInView, PressableScale } from '@/components/ui';
+import { AppText, PressableScale } from '@/components/ui';
 import { useCancelVisit, useMyVisits, type MyVisit } from '@/features/visitors/queries';
 import { elevation, palette, radius, spacing } from '@/theme';
 
@@ -30,10 +30,8 @@ export default function VisitorsListScreen() {
           contentContainerStyle={styles.list}
           refreshControl={<RefreshControl refreshing={visits.isFetching} onRefresh={() => visits.refetch()} tintColor={palette.brand500} />}
           ListEmptyComponent={<AppText variant="body" color={palette.ink300} style={styles.empty}>No visitor invites yet.</AppText>}
-          renderItem={({ item, index }) => (
-            <FadeInView index={index}>
-              <Row item={item} onCancel={() => cancel.mutate(item.id)} canCancel={item.status === 'pending' || item.status === 'approved'} />
-            </FadeInView>
+          renderItem={({ item }) => (
+            <Row item={item} onCancel={() => cancel.mutate(item.id)} canCancel={item.status === 'pending' || item.status === 'approved'} />
           )}
         />
       )}

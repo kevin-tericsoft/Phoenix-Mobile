@@ -1,8 +1,9 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
-import { AppText, FadeInView, PressableScale } from '@/components/ui';
+import { AppText, PressableScale } from '@/components/ui';
 import { useAmenityDetail, useSubmitReview } from '@/features/amenities/queries';
 import { elevation, font, palette, radius, spacing } from '@/theme';
 
@@ -28,7 +29,7 @@ export default function AmenityDetailScreen() {
 
   return (
     <ScrollView style={styles.root} contentContainerStyle={styles.content}>
-      <FadeInView index={0}>
+      <View>
         <AppText variant="title">{a.name}</AppText>
         {a.short_description ? (
           <AppText variant="body" color={palette.ink400} style={{ marginTop: spacing.xs }}>
@@ -38,12 +39,22 @@ export default function AmenityDetailScreen() {
         <View style={styles.factCard}>
           {a.location ? <Fact label="Location" value={a.location} /> : null}
           {a.capacity ? <Fact label="Capacity" value={String(a.capacity)} /> : null}
-          <Fact label="Rating" value={a.avg_rating != null ? `★ ${a.avg_rating} (${a.review_count})` : 'No reviews'} />
+          <View style={styles.row}>
+            <AppText variant="body" color={palette.ink400}>Rating</AppText>
+            {a.avg_rating != null ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                <Ionicons name="star" size={15} color={palette.warning} />
+                <AppText variant="h3">{a.avg_rating} ({a.review_count})</AppText>
+              </View>
+            ) : (
+              <AppText variant="h3">No reviews</AppText>
+            )}
+          </View>
         </View>
-      </FadeInView>
+      </View>
 
       {a.operating_hours.length > 0 ? (
-        <FadeInView index={1}>
+        <View>
           <AppText variant="h2" style={styles.sectionTitle}>Hours</AppText>
           <View style={styles.card}>
             {a.operating_hours.map((h) => (
@@ -53,26 +64,30 @@ export default function AmenityDetailScreen() {
               </View>
             ))}
           </View>
-        </FadeInView>
+        </View>
       ) : null}
 
-      <FadeInView index={2}>
+      <View>
         <AppText variant="h2" style={styles.sectionTitle}>Reviews ({a.review_count})</AppText>
         {a.reviews.map((r) => (
           <View key={r.id} style={styles.reviewCard}>
-            <AppText color={palette.warning}>{'★'.repeat(r.rating)}</AppText>
+            <View style={{ flexDirection: 'row', gap: 2 }}>
+              {[1, 2, 3, 4, 5].map((n) => (
+                <Ionicons key={n} name={n <= r.rating ? 'star' : 'star-outline'} size={14} color={palette.warning} />
+              ))}
+            </View>
             <AppText variant="body" color={palette.ink700}>{r.comment}</AppText>
           </View>
         ))}
-      </FadeInView>
+      </View>
 
-      <FadeInView index={3}>
+      <View>
         <AppText variant="h2" style={styles.sectionTitle}>Write a review</AppText>
         <View style={styles.card}>
           <View style={styles.starRow}>
             {[1, 2, 3, 4, 5].map((n) => (
               <Pressable key={n} onPress={() => setRating(n)} hitSlop={6}>
-                <AppText style={[styles.star, n <= rating && styles.starOn]}>★</AppText>
+                <Ionicons name={n <= rating ? 'star' : 'star-outline'} size={32} color={n <= rating ? palette.warning : palette.ink200} />
               </Pressable>
             ))}
           </View>
@@ -85,7 +100,7 @@ export default function AmenityDetailScreen() {
             <AppText variant="h3" color={palette.white}>{submit.isPending ? 'Submitting…' : 'Submit review'}</AppText>
           </PressableScale>
         </View>
-      </FadeInView>
+      </View>
     </ScrollView>
   );
 }
@@ -109,8 +124,6 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   reviewCard: { backgroundColor: palette.surface, borderRadius: radius.md, padding: spacing.lg, gap: spacing.xs, marginBottom: spacing.sm, ...elevation.card },
   starRow: { flexDirection: 'row', gap: spacing.sm },
-  star: { fontSize: 32, color: palette.ink200 },
-  starOn: { color: palette.warning },
   input: { borderWidth: 1, borderColor: palette.ink100, backgroundColor: palette.canvas, borderRadius: radius.md, padding: spacing.md, fontSize: 15, minHeight: 72, color: palette.ink900, ...font('400') },
   button: { backgroundColor: palette.brand500, borderRadius: radius.md, paddingVertical: spacing.lg, alignItems: 'center', ...elevation.brandGlow },
 });

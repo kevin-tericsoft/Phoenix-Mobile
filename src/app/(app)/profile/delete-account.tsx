@@ -1,7 +1,8 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
-import { AppText, FadeInView, PressableScale } from '@/components/ui';
+import { AppText, PressableScale } from '@/components/ui';
 import { useAuth } from '@/features/auth/auth-context';
 import { useDeleteAccount } from '@/features/profile/queries';
 import { elevation, palette, radius, spacing } from '@/theme';
@@ -32,13 +33,11 @@ export default function DeleteAccountScreen() {
         <AppText variant="title">We&apos;re sorry to see you go</AppText>
         <AppText variant="body" color={palette.ink400}>Help us improve — why are you leaving?</AppText>
         <View style={{ gap: spacing.sm, marginTop: spacing.md }}>
-          {REASONS.map((r, i) => (
-            <FadeInView key={r} index={i}>
-              <PressableScale haptic={false} onPress={() => setReason(r)} style={[styles.reason, reason === r && styles.reasonSel]}>
-                <View style={[styles.radio, reason === r && styles.radioSel]} />
-                <AppText variant="h3" color={reason === r ? palette.brand600 : palette.ink700}>{r}</AppText>
-              </PressableScale>
-            </FadeInView>
+          {REASONS.map((r) => (
+            <PressableScale key={r} haptic={false} onPress={() => setReason(r)} style={[styles.reason, reason === r && styles.reasonSel]}>
+              <View style={[styles.radio, reason === r && styles.radioSel]} />
+              <AppText variant="h3" color={reason === r ? palette.brand600 : palette.ink700}>{r}</AppText>
+            </PressableScale>
           ))}
         </View>
         <PressableScale disabled={!reason} onPress={() => setStep('confirm')} style={[styles.next, !reason && { opacity: 0.5 }]}>
@@ -50,7 +49,7 @@ export default function DeleteAccountScreen() {
 
   return (
     <View style={styles.root}>
-      <View style={styles.warnIcon}><AppText style={{ fontSize: 40 }}>⚠️</AppText></View>
+      <View style={styles.warnIcon}><Ionicons name="warning-outline" size={40} color={palette.danger} /></View>
       <AppText variant="title" style={{ textAlign: 'center' }}>Delete your account?</AppText>
       <AppText variant="body" color={palette.ink400} style={{ textAlign: 'center' }}>
         This permanently removes your access. This action cannot be undone.

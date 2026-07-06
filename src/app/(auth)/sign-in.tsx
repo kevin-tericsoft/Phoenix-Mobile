@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useState } from 'react';
@@ -12,7 +13,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { AppText, FadeInView, PressableScale } from '@/components/ui';
+import { AppText, PressableScale } from '@/components/ui';
 import { useRequestOtp } from '@/features/auth/queries';
 import { font, gradients, palette, radius, spacing } from '@/theme';
 
@@ -60,9 +61,9 @@ export default function SignInScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <View style={[styles.body, { paddingTop: insets.top + spacing.xxxl }]}>
-          <FadeInView index={0}>
+          <View>
             <View style={styles.brandMark}>
-              <AppText style={{ fontSize: 34 }}>🏙️</AppText>
+              <Ionicons name="business" size={32} color={palette.white} />
             </View>
             <AppText variant="display" color={palette.white} style={{ marginTop: spacing.xl }}>
               Welcome to Phoenix
@@ -70,9 +71,9 @@ export default function SignInScreen() {
             <AppText variant="body" color="#DCEBFF" style={{ marginTop: spacing.xs }}>
               Your community, in one place.
             </AppText>
-          </FadeInView>
+          </View>
 
-          <FadeInView index={2} style={styles.card}>
+          <View style={styles.card}>
             {/* Mode toggle */}
             <View style={styles.tabs}>
               {(['phone', 'email'] as Mode[]).map((m) => (
@@ -151,12 +152,15 @@ export default function SignInScreen() {
               {requestOtp.isPending ? (
                 <ActivityIndicator color={palette.white} />
               ) : (
-                <AppText variant="h3" color={palette.white}>
-                  Get code →
-                </AppText>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
+                  <AppText variant="h3" color={palette.white}>
+                    Get code
+                  </AppText>
+                  <Ionicons name="arrow-forward" size={18} color={palette.white} />
+                </View>
               )}
             </PressableScale>
-          </FadeInView>
+          </View>
         </View>
       </KeyboardAvoidingView>
     </LinearGradient>

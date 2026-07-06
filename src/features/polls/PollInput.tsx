@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -8,11 +9,11 @@ import type { MyPoll } from './queries';
 
 /**
  * Renders the correct input for a poll's answer_type, mirroring the old app's four poll
- * components (radio / checkbox / stars|emoji rating / slider). All of them ultimately resolve
+ * components (radio / checkbox / stars|mood rating / slider). All of them ultimately resolve
  * to a set of poll_option ids, which is what the backend vote endpoint accepts — so the
  * control varies but the submit contract is uniform.
  */
-const EMOJIS = ['😡', '🙁', '😐', '🙂', '😍'];
+const MOOD_ICONS = ['sad', 'sad-outline', 'remove-circle-outline', 'happy-outline', 'happy'] as const;
 
 export function PollInput({
   poll,
@@ -71,7 +72,7 @@ function CheckboxInput({ poll, onVote, pending }: any) {
         return (
           <PressableScale key={opt.id} haptic={false} disabled={pending} onPress={() => toggle(opt.id)} style={[styles.option, isSel && styles.optionSel]}>
             <View style={[styles.checkbox, isSel && styles.checkboxSel]}>
-              {isSel ? <AppText color={palette.white} style={{ fontSize: 13 }}>✓</AppText> : null}
+              {isSel ? <Ionicons name="checkmark" size={14} color={palette.white} /> : null}
             </View>
             <AppText variant="h3" color={isSel ? palette.brand600 : palette.ink700}>{opt.title}</AppText>
           </PressableScale>
@@ -94,10 +95,8 @@ function RatingInput({ poll, onVote, pending, emoji }: any) {
       {opts.map((opt, i) => {
         const active = emoji ? opt.id === myId : myIdx >= 0 && i <= myIdx;
         return (
-          <PressableScale key={opt.id} disabled={pending} onPress={() => onVote([opt.id])}>
-            <AppText style={[styles.ratingGlyph, !active && styles.ratingDim]}>
-              {emoji ? (EMOJIS[i] ?? '⭐') : '★'}
-            </AppText>
+          <PressableScale key={opt.id} disabled={pending} onPress={() => onVote([opt.id])} style={!active ? styles.ratingDim : undefined}>
+            <Ionicons name={emoji ? (MOOD_ICONS[i] ?? 'happy') : 'star'} size={36} color={palette.warning} />
           </PressableScale>
         );
       })}
@@ -141,6 +140,5 @@ const styles = StyleSheet.create({
   checkboxSel: { borderColor: palette.brand500, backgroundColor: palette.brand500 },
   submit: { backgroundColor: palette.brand500, borderRadius: radius.md, paddingVertical: spacing.md, alignItems: 'center', marginTop: spacing.xs },
   ratingRow: { flexDirection: 'row', justifyContent: 'center', gap: spacing.sm, paddingVertical: spacing.sm },
-  ratingGlyph: { fontSize: 40, color: palette.warning },
   ratingDim: { opacity: 0.3 },
 });

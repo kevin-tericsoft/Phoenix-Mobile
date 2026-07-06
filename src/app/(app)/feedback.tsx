@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { router, Stack } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -28,7 +29,7 @@ export default function FeedbackScreen() {
   if (done) {
     return (
       <SafeAreaView style={styles.center}>
-        <AppText style={{ fontSize: 56 }}>🎉</AppText>
+        <Ionicons name="checkmark-circle" size={56} color={palette.success} />
         <AppText variant="title" style={{ textAlign: 'center' }}>Thank you!</AppText>
         <AppText variant="body" color={palette.ink400} style={{ textAlign: 'center' }}>
           Your feedback helps us improve.

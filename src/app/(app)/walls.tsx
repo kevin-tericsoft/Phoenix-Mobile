@@ -1,16 +1,24 @@
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 
-import { AppText, FadeInView, GradientHeader, PressableScale } from '@/components/ui';
+import { AppText, GradientHeader, PressableScale } from '@/components/ui';
 import { useMyWalls, useReactToWall, type MyWall } from '@/features/walls/queries';
 import { elevation, palette, radius, spacing } from '@/theme';
 
-const REACTIONS: { code: number; emoji: string }[] = [
-  { code: 1, emoji: '👍' },
-  { code: 2, emoji: '❤️' },
-  { code: 3, emoji: '👏' },
-  { code: 4, emoji: '🙂' },
-  { code: 5, emoji: '😕' },
-];
+const REACTIONS = [
+  { code: 1, family: 'ionicons', icon: 'thumbs-up-outline' },
+  { code: 2, family: 'ionicons', icon: 'heart-outline' },
+  { code: 3, family: 'material', icon: 'hand-clap' },
+  { code: 4, family: 'ionicons', icon: 'happy-outline' },
+  { code: 5, family: 'ionicons', icon: 'sad-outline' },
+] as const;
+
+function ReactionIcon({ family, icon, size, color }: { family: 'ionicons' | 'material'; icon: string; size: number; color: string }) {
+  if (family === 'material') {
+    return <MaterialCommunityIcons name={icon as keyof typeof MaterialCommunityIcons.glyphMap} size={size} color={color} />;
+  }
+  return <Ionicons name={icon as keyof typeof Ionicons.glyphMap} size={size} color={color} />;
+}
 
 export default function WallsScreen() {
   const walls = useMyWalls();
@@ -35,11 +43,7 @@ export default function WallsScreen() {
           contentContainerStyle={styles.list}
           refreshControl={<RefreshControl refreshing={walls.isFetching} onRefresh={() => walls.refetch()} tintColor={palette.brand500} />}
           ListEmptyComponent={<AppText variant="body" color={palette.ink300} style={styles.empty}>Nothing on the wall yet.</AppText>}
-          renderItem={({ item, index }) => (
-            <FadeInView index={index}>
-              <WallCard wall={item} />
-            </FadeInView>
-          )}
+          renderItem={({ item }) => <WallCard wall={item} />}
         />
       )}
     </View>
@@ -55,7 +59,7 @@ function WallCard({ wall }: { wall: MyWall }) {
         {wall.description}
       </AppText>
       <View style={styles.reactions}>
-        {REACTIONS.map(({ code, emoji }) => {
+        {REACTIONS.map(({ code, family, icon }) => {
           const mine = wall.my_reaction === code;
           const count = wall.reaction_counts[code] ?? 0;
           return (
@@ -65,7 +69,7 @@ function WallCard({ wall }: { wall: MyWall }) {
               onPress={() => react.mutate({ wallId: wall.id, response: mine ? null : code })}
               style={[styles.reaction, mine && styles.reactionActive]}
             >
-              <AppText style={{ fontSize: 16 }}>{emoji}</AppText>
+              <ReactionIcon family={family} icon={icon} size={16} color={mine ? palette.brand600 : palette.ink400} />
               {count > 0 ? (
                 <AppText variant="caption" color={mine ? palette.brand600 : palette.ink400}>
                   {count}

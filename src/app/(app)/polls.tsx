@@ -1,6 +1,7 @@
+import { Ionicons } from '@expo/vector-icons';
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 
-import { AppText, FadeInView, GradientHeader } from '@/components/ui';
+import { AppText, GradientHeader } from '@/components/ui';
 import { PollInput } from '@/features/polls/PollInput';
 import { useMyPolls, useVotePoll, type MyPoll } from '@/features/polls/queries';
 import { elevation, palette, radius, spacing } from '@/theme';
@@ -35,11 +36,7 @@ export default function PollsScreen() {
           contentContainerStyle={styles.list}
           refreshControl={<RefreshControl refreshing={polls.isFetching} onRefresh={() => polls.refetch()} tintColor={palette.brand500} />}
           ListEmptyComponent={<AppText variant="body" color={palette.ink300} style={styles.empty}>No active polls right now.</AppText>}
-          renderItem={({ item, index }) => (
-            <FadeInView index={index}>
-              <PollCard poll={item} />
-            </FadeInView>
-          )}
+          renderItem={({ item }) => <PollCard poll={item} />}
         />
       )}
     </View>
@@ -57,9 +54,12 @@ function PollCard({ poll }: { poll: MyPoll }) {
       </View>
       <AppText variant="h2">{poll.question}</AppText>
       {poll.has_responded ? (
-        <AppText variant="label" color={palette.success}>
-          ✓ You voted
-        </AppText>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
+          <Ionicons name="checkmark-circle" size={16} color={palette.success} />
+          <AppText variant="label" color={palette.success}>
+            You voted
+          </AppText>
+        </View>
       ) : null}
       <View style={{ marginTop: spacing.xs }}>
         <PollInput

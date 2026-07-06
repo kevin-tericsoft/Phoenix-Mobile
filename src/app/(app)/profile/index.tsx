@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import {
   ActivityIndicator,
@@ -11,7 +12,7 @@ import {
 
 import { Link } from 'expo-router';
 
-import { AppText, FadeInView, GradientHeader, PressableScale } from '@/components/ui';
+import { AppText, GradientHeader, PressableScale } from '@/components/ui';
 import { useAuth } from '@/features/auth/auth-context';
 import { useMe } from '@/features/auth/queries';
 import { useUpdateProfile } from '@/features/profile/queries';
@@ -74,7 +75,7 @@ export default function ProfileScreen() {
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView contentContainerStyle={styles.body}>
           {editing ? (
-            <FadeInView style={styles.card}>
+            <View style={styles.card}>
               <Field label="Name"><TextInput style={styles.input} value={name} onChangeText={setName} /></Field>
               <Field label="Designation"><TextInput style={styles.input} value={designation} onChangeText={setDesignation} /></Field>
               <Field label="Phone"><TextInput style={styles.input} value={phone} onChangeText={setPhone} keyboardType="phone-pad" /></Field>
@@ -84,47 +85,43 @@ export default function ProfileScreen() {
               <PressableScale onPress={() => setEditing(false)} haptic={false} style={styles.ghost}>
                 <AppText variant="label" color={palette.ink400}>Cancel</AppText>
               </PressableScale>
-            </FadeInView>
+            </View>
           ) : (
             <>
-              <FadeInView index={0} style={styles.card}>
+              <View style={styles.card}>
                 <Row label="Email" value={u.email} />
                 <Row label="Phone" value={u.phone} />
                 <Row label="User code" value={u.user_code} />
-              </FadeInView>
-              <FadeInView index={1}>
-                <Link href="/profile/virtual-id" asChild>
-                  <PressableScale style={styles.linkRow}>
-                    <AppText variant="h3">🆔  Digital ID</AppText>
-                    <AppText variant="h3" color={palette.ink200}>›</AppText>
-                  </PressableScale>
-                </Link>
-              </FadeInView>
-              <FadeInView index={1}>
-                <Link href="/feedback" asChild>
-                  <PressableScale style={styles.linkRow}>
-                    <AppText variant="h3">💬  Send feedback</AppText>
-                    <AppText variant="h3" color={palette.ink200}>›</AppText>
-                  </PressableScale>
-                </Link>
-              </FadeInView>
-              <FadeInView index={2}>
-                <PressableScale onPress={startEdit} style={styles.button}>
-                  <AppText variant="h3" color={palette.white}>Edit profile</AppText>
+              </View>
+              <Link href="/profile/virtual-id" asChild>
+                <PressableScale style={styles.linkRow}>
+                  <View style={styles.linkLabel}>
+                    <Ionicons name="card-outline" size={20} color={palette.ink700} />
+                    <AppText variant="h3">Digital ID</AppText>
+                  </View>
+                  <Ionicons name="chevron-forward" size={20} color={palette.ink200} />
                 </PressableScale>
-              </FadeInView>
-              <FadeInView index={3}>
-                <PressableScale onPress={signOut} haptic={false} style={styles.ghost}>
-                  <AppText variant="label" color={palette.danger}>Sign out</AppText>
+              </Link>
+              <Link href="/feedback" asChild>
+                <PressableScale style={styles.linkRow}>
+                  <View style={styles.linkLabel}>
+                    <Ionicons name="chatbubble-outline" size={20} color={palette.ink700} />
+                    <AppText variant="h3">Send feedback</AppText>
+                  </View>
+                  <Ionicons name="chevron-forward" size={20} color={palette.ink200} />
                 </PressableScale>
-              </FadeInView>
-              <FadeInView index={4}>
-                <Link href="/profile/delete-account" asChild>
-                  <PressableScale haptic={false} style={styles.ghost}>
-                    <AppText variant="caption" color={palette.ink300}>Delete account</AppText>
-                  </PressableScale>
-                </Link>
-              </FadeInView>
+              </Link>
+              <PressableScale onPress={startEdit} style={styles.button}>
+                <AppText variant="h3" color={palette.white}>Edit profile</AppText>
+              </PressableScale>
+              <PressableScale onPress={signOut} haptic={false} style={styles.ghost}>
+                <AppText variant="label" color={palette.danger}>Sign out</AppText>
+              </PressableScale>
+              <Link href="/profile/delete-account" asChild>
+                <PressableScale haptic={false} style={styles.ghost}>
+                  <AppText variant="caption" color={palette.ink300}>Delete account</AppText>
+                </PressableScale>
+              </Link>
             </>
           )}
         </ScrollView>
@@ -162,6 +159,7 @@ const styles = StyleSheet.create({
   },
   card: { backgroundColor: palette.surface, borderRadius: radius.lg, padding: spacing.xl, gap: spacing.md, ...elevation.card },
   linkRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: palette.surface, borderRadius: radius.lg, padding: spacing.lg, ...elevation.card },
+  linkLabel: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   input: { borderWidth: 1, borderColor: palette.ink100, backgroundColor: palette.canvas, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, fontSize: 16, color: palette.ink900, ...font('500') },
   button: { backgroundColor: palette.brand500, borderRadius: radius.md, paddingVertical: spacing.lg, alignItems: 'center', ...elevation.brandGlow },

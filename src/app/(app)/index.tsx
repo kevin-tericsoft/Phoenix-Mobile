@@ -1,8 +1,9 @@
+import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Link } from 'expo-router';
 import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 
-import { AppText, FadeInView, GlassSurface, GradientHeader, PressableScale } from '@/components/ui';
+import { AppText, GlassSurface, GradientHeader, PressableScale } from '@/components/ui';
 import { useAuth } from '@/features/auth/auth-context';
 import { useMe } from '@/features/auth/queries';
 import { useMyNotifications, useUnreadCount } from '@/features/notifications/queries';
@@ -15,13 +16,13 @@ function greeting() {
 }
 
 const TILES = [
-  { href: '/events', label: 'Events', emoji: '🎉', g: ['#0078F3', '#0063CC'] as const },
-  { href: '/polls', label: 'Polls', emoji: '🗳️', g: ['#5d9eff', '#0078F3'] as const },
-  { href: '/amenities', label: 'Amenities', emoji: '🏋️', g: ['#0A63E0', '#063B73'] as const },
-  { href: '/walls', label: 'Community', emoji: '💬', g: ['#3376E9', '#0078F3'] as const },
-  { href: '/visitors', label: 'Visitors', emoji: '🛎️', g: ['#0078F3', '#5d9eff'] as const },
-  { href: '/parcels', label: 'Parcels', emoji: '📦', g: ['#0063CC', '#0A2A4D'] as const },
-];
+  { href: '/events', label: 'Events', icon: 'calendar-outline', g: ['#0078F3', '#0063CC'] as const },
+  { href: '/polls', label: 'Polls', icon: 'bar-chart-outline', g: ['#5d9eff', '#0078F3'] as const },
+  { href: '/amenities', label: 'Amenities', icon: 'barbell-outline', g: ['#0A63E0', '#063B73'] as const },
+  { href: '/walls', label: 'Community', icon: 'chatbubbles-outline', g: ['#3376E9', '#0078F3'] as const },
+  { href: '/visitors', label: 'Visitors', icon: 'people-outline', g: ['#0078F3', '#5d9eff'] as const },
+  // Parcels tile hidden for now — parcel management is paused; route/feature code left intact.
+] as const;
 
 export default function HomeScreen() {
   const { status } = useAuth();
@@ -46,7 +47,7 @@ export default function HomeScreen() {
             <ActivityIndicator color="#fff" style={{ alignSelf: 'flex-start', marginTop: 6 }} />
           ) : (
             <AppText variant="display" color={palette.white} style={{ marginTop: 2 }}>
-              {me.data?.name?.split(' ')[0] ?? 'there'} 👋
+              {me.data?.name?.split(' ')[0] ?? 'there'}
             </AppText>
           )}
 
@@ -74,39 +75,37 @@ export default function HomeScreen() {
         <View style={styles.body}>
           {/* Security staff get a prominent gate shortcut. */}
           {me.data?.role?.code === 'security' ? (
-            <FadeInView>
-              <Link href="/gate" asChild>
-                <PressableScale style={styles.gateCard}>
-                  <LinearGradient colors={['#0A2A4D', '#0063CC']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.gateInner}>
-                    <AppText style={{ fontSize: 30 }}>🛡️</AppText>
-                    <View style={{ flex: 1 }}>
-                      <AppText variant="h2" color={palette.white}>Gate check-in</AppText>
-                      <AppText variant="caption" color="#DCEBFF">Scan or enter a visit code</AppText>
-                    </View>
-                    <AppText variant="title" color={palette.white}>›</AppText>
-                  </LinearGradient>
-                </PressableScale>
-              </Link>
-            </FadeInView>
+            <Link href="/gate" asChild>
+              <PressableScale style={styles.gateCard}>
+                <LinearGradient colors={['#0A2A4D', '#0063CC']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.gateInner}>
+                  <Ionicons name="shield-checkmark-outline" size={28} color={palette.white} />
+                  <View style={{ flex: 1 }}>
+                    <AppText variant="h2" color={palette.white}>Gate check-in</AppText>
+                    <AppText variant="caption" color="#DCEBFF">Scan or enter a visit code</AppText>
+                  </View>
+                  <Ionicons name="chevron-forward" size={20} color={palette.white} />
+                </LinearGradient>
+              </PressableScale>
+            </Link>
           ) : null}
 
           <AppText variant="h2" style={{ marginBottom: spacing.md, marginTop: me.data?.role?.code === 'security' ? spacing.lg : 0 }}>
             Explore
           </AppText>
           <View style={styles.grid}>
-            {TILES.map((t, i) => (
-              <FadeInView key={t.href} index={i} style={styles.tileWrap}>
+            {TILES.map((t) => (
+              <View key={t.href} style={styles.tileWrap}>
                 <Link href={t.href as never} asChild>
                   <PressableScale style={styles.tilePress}>
                     <LinearGradient colors={t.g} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.tile}>
-                      <AppText style={styles.tileEmoji}>{t.emoji}</AppText>
+                      <Ionicons name={t.icon} size={28} color={palette.white} />
                       <AppText variant="h3" color={palette.white}>
                         {t.label}
                       </AppText>
                     </LinearGradient>
                   </PressableScale>
                 </Link>
-              </FadeInView>
+              </View>
             ))}
           </View>
 
@@ -118,15 +117,13 @@ export default function HomeScreen() {
                   <PressableScale haptic={false}><AppText variant="label" color={palette.brand500}>See all</AppText></PressableScale>
                 </Link>
               </View>
-              {recent.map((n, i) => (
-                <FadeInView key={n.id} index={i}>
-                  <Link href="/notifications" asChild>
-                    <PressableScale style={styles.announce}>
-                      <View style={[styles.announceDot, { backgroundColor: n.status !== 'read' ? palette.brand500 : palette.ink200 }]} />
-                      <AppText variant="body" color={palette.ink700} numberOfLines={2} style={{ flex: 1 }}>{n.message}</AppText>
-                    </PressableScale>
-                  </Link>
-                </FadeInView>
+              {recent.map((n) => (
+                <Link key={n.id} href="/notifications" asChild>
+                  <PressableScale style={styles.announce}>
+                    <View style={[styles.announceDot, { backgroundColor: n.status !== 'read' ? palette.brand500 : palette.ink200 }]} />
+                    <AppText variant="body" color={palette.ink700} numberOfLines={2} style={{ flex: 1 }}>{n.message}</AppText>
+                  </PressableScale>
+                </Link>
               ))}
             </View>
           ) : null}
@@ -159,7 +156,6 @@ const styles = StyleSheet.create({
     minHeight: 116,
     justifyContent: 'flex-end',
   },
-  tileEmoji: { fontSize: 30 },
   gateCard: { borderRadius: radius.lg, ...elevation.raised },
   gateInner: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, borderRadius: radius.lg, padding: spacing.lg },
   recentHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.md },

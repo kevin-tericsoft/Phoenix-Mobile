@@ -1,7 +1,8 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 
-import { AppText, FadeInView, PressableScale } from '@/components/ui';
+import { AppText, PressableScale } from '@/components/ui';
 import { useMyEvents, useToggleInterest, type MyEvent } from '@/features/events/queries';
 import { elevation, palette, radius, spacing } from '@/theme';
 
@@ -22,11 +23,7 @@ export default function EventsListScreen() {
       contentContainerStyle={styles.list}
       refreshControl={<RefreshControl refreshing={events.isFetching} onRefresh={() => events.refetch()} tintColor={palette.brand500} />}
       ListEmptyComponent={<AppText variant="body" color={palette.ink300} style={styles.empty}>No upcoming events.</AppText>}
-      renderItem={({ item, index }) => (
-        <FadeInView index={index}>
-          <EventCard event={item} />
-        </FadeInView>
-      )}
+      renderItem={({ item }) => <EventCard event={item} />}
     />
   );
 }
@@ -49,9 +46,12 @@ function EventCard({ event }: { event: MyEvent }) {
             onPress={() => toggle.mutate({ eventId: event.id, interested: !event.i_am_interested })}
             style={[styles.button, event.i_am_interested && styles.buttonActive]}
           >
-            <AppText variant="label" color={event.i_am_interested ? palette.white : palette.brand500}>
-              {event.i_am_interested ? '✓ Interested' : 'Interested'}
-            </AppText>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+              {event.i_am_interested ? <Ionicons name="checkmark" size={14} color={palette.white} /> : null}
+              <AppText variant="label" color={event.i_am_interested ? palette.white : palette.brand500}>
+                Interested
+              </AppText>
+            </View>
           </PressableScale>
         </View>
       </PressableScale>

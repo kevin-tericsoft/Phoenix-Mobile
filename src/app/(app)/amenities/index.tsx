@@ -1,20 +1,21 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 
-import { AppText, FadeInView, PressableScale } from '@/components/ui';
+import { AppText, PressableScale } from '@/components/ui';
 import { useMyAmenities, type MyAmenity } from '@/features/amenities/queries';
 import { elevation, palette, radius, spacing } from '@/theme';
 
-const TYPE_EMOJI: Record<string, string> = {
-  fitness: '🏋️',
-  food_court: '🍽️',
-  childcare: '🧸',
-  meeting_room: '📋',
-  conference_room: '🎤',
-  salon: '💇',
-  banking: '🏦',
-  retail_fb: '🛍️',
-  outdoor_gathering: '🌳',
+const TYPE_ICON: Record<string, keyof typeof Ionicons.glyphMap> = {
+  fitness: 'barbell-outline',
+  food_court: 'restaurant-outline',
+  childcare: 'happy-outline',
+  meeting_room: 'clipboard-outline',
+  conference_room: 'mic-outline',
+  salon: 'cut-outline',
+  banking: 'cash-outline',
+  retail_fb: 'bag-outline',
+  outdoor_gathering: 'leaf-outline',
 };
 
 export default function AmenitiesListScreen() {
@@ -29,11 +30,7 @@ export default function AmenitiesListScreen() {
       contentContainerStyle={styles.content}
       refreshControl={<RefreshControl refreshing={amenities.isFetching} onRefresh={() => amenities.refetch()} tintColor={palette.brand500} />}
       ListEmptyComponent={<AppText variant="body" color={palette.ink300} style={styles.empty}>No amenities available.</AppText>}
-      renderItem={({ item, index }) => (
-        <FadeInView index={index}>
-          <Row item={item} />
-        </FadeInView>
-      )}
+      renderItem={({ item }) => <Row item={item} />}
     />
   );
 }
@@ -43,7 +40,7 @@ function Row({ item }: { item: MyAmenity }) {
     <Link href={`/amenities/${item.id}`} asChild>
       <PressableScale style={styles.card}>
         <View style={styles.icon}>
-          <AppText style={{ fontSize: 26 }}>{TYPE_EMOJI[item.amenity_type] ?? '🏢'}</AppText>
+          <Ionicons name={TYPE_ICON[item.amenity_type] ?? 'business-outline'} size={24} color={palette.brand500} />
         </View>
         <View style={{ flex: 1, gap: 2 }}>
           <AppText variant="h3">{item.name}</AppText>
@@ -52,13 +49,20 @@ function Row({ item }: { item: MyAmenity }) {
               {item.tagline}
             </AppText>
           ) : null}
-          <AppText variant="caption" color={palette.brand500} style={{ marginTop: 2 }}>
-            {item.avg_rating != null ? `★ ${item.avg_rating} · ${item.review_count} reviews` : 'No reviews yet'}
-          </AppText>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 }}>
+            {item.avg_rating != null ? (
+              <>
+                <Ionicons name="star" size={13} color={palette.brand500} />
+                <AppText variant="caption" color={palette.brand500}>
+                  {item.avg_rating} · {item.review_count} reviews
+                </AppText>
+              </>
+            ) : (
+              <AppText variant="caption" color={palette.brand500}>No reviews yet</AppText>
+            )}
+          </View>
         </View>
-        <AppText variant="h3" color={palette.ink200}>
-          ›
-        </AppText>
+        <Ionicons name="chevron-forward" size={20} color={palette.ink200} />
       </PressableScale>
     </Link>
   );

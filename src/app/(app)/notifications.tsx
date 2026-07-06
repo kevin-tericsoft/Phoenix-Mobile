@@ -1,6 +1,6 @@
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 
-import { AppText, FadeInView, GradientHeader, PressableScale } from '@/components/ui';
+import { AppText, GradientHeader, PressableScale } from '@/components/ui';
 import { useMarkRead, useMyNotifications, type MyNotification } from '@/features/notifications/queries';
 import { elevation, palette, radius, spacing } from '@/theme';
 
@@ -34,10 +34,8 @@ export default function NotificationsScreen() {
               You&apos;re all caught up.
             </AppText>
           }
-          renderItem={({ item, index }) => (
-            <FadeInView index={index}>
-              <Row item={item} onPress={() => item.status !== 'read' && markRead.mutate(item.id)} />
-            </FadeInView>
+          renderItem={({ item }) => (
+            <Row item={item} onPress={() => item.status !== 'read' && markRead.mutate(item.id)} />
           )}
         />
       )}
