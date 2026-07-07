@@ -5,7 +5,7 @@ import { useUnreadCount } from '@/features/notifications/queries';
 import { fontFamily, palette } from '@/theme';
 
 /**
- * Authenticated tab bar — Aurora-branded: brand-blue active tint, Sora labels, Ionicons glyphs.
+ * Authenticated tab bar — Aurora-branded: brand-blue active tint, Inter labels, Ionicons glyphs.
  * The notifications tab shows a live unread badge from TanStack Query.
  */
 export default function AppLayout() {

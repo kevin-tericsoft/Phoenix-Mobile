@@ -2,7 +2,7 @@ import { Stack } from 'expo-router';
 
 import { fontFamily, palette } from '@/theme';
 
-/** Branded native stack: white-on-brand header, Sora title. List → detail push. */
+/** Branded native stack: white-on-brand header, Inter title. List → detail push. */
 export default function AmenitiesLayout() {
   return (
     <Stack

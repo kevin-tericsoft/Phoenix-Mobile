@@ -67,7 +67,7 @@ export const radius = {
   pill: 999,
 } as const;
 
-/** Type scale. fontFamily is filled in by the font loader (Sora) at runtime via `font()`. */
+/** Type scale. fontFamily is filled in by the font loader (Inter) at runtime via `font()`. */
 export const type = {
   display: { fontSize: 30, lineHeight: 36, fontWeight: '700' as const },
   title: { fontSize: 24, lineHeight: 30, fontWeight: '700' as const },

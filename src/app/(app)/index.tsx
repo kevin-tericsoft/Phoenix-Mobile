@@ -3,11 +3,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Link } from 'expo-router';
 import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 
-import { AppText, GlassSurface, GradientHeader, PressableScale } from '@/components/ui';
+import { AppText, GradientHeader, PressableScale } from '@/components/ui';
 import { useAuth } from '@/features/auth/auth-context';
 import { useMe } from '@/features/auth/queries';
-import { useMyNotifications, useUnreadCount } from '@/features/notifications/queries';
-import { useMyVisits } from '@/features/visitors/queries';
+import { useMyNotifications } from '@/features/notifications/queries';
 import { elevation, gradients, palette, radius, spacing } from '@/theme';
 
 function greeting() {
@@ -27,14 +26,8 @@ const TILES = [
 export default function HomeScreen() {
   const { status } = useAuth();
   const me = useMe(status === 'authenticated');
-  const unread = useUnreadCount();
-  const visits = useMyVisits();
   const notifications = useMyNotifications();
   const recent = (notifications.data?.data ?? []).slice(0, 3);
-
-  const upcomingVisits = (visits.data ?? []).filter(
-    (v) => v.status === 'pending' || v.status === 'approved',
-  ).length;
 
   return (
     <View style={styles.root}>
@@ -50,26 +43,6 @@ export default function HomeScreen() {
               {me.data?.name?.split(' ')[0] ?? 'there'}
             </AppText>
           )}
-
-          {/* glass stat cards floating on the gradient */}
-          <View style={styles.stats}>
-            <GlassSurface tone="light" style={styles.stat} borderRadius={radius.md}>
-              <AppText variant="title" color={palette.white}>
-                {unread.data ?? 0}
-              </AppText>
-              <AppText variant="caption" color="#EAF1FB">
-                new alerts
-              </AppText>
-            </GlassSurface>
-            <GlassSurface tone="light" style={styles.stat} borderRadius={radius.md}>
-              <AppText variant="title" color={palette.white}>
-                {upcomingVisits}
-              </AppText>
-              <AppText variant="caption" color="#EAF1FB">
-                upcoming visits
-              </AppText>
-            </GlassSurface>
-          </View>
         </GradientHeader>
 
         <View style={styles.body}>
@@ -136,14 +109,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: palette.canvas },
   scroll: { paddingBottom: spacing.xxl },
-  stats: { flexDirection: 'row', gap: spacing.md, marginTop: spacing.xl },
-  stat: {
-    flex: 1,
-    paddingVertical: spacing.lg,
-    paddingHorizontal: spacing.lg,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: '#FFFFFF55',
-  },
   body: { padding: spacing.xl },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md },
   tileWrap: { width: '47.5%' },

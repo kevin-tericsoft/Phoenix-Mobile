@@ -5,7 +5,7 @@ import { font, palette, type } from '@/theme';
 type Variant = keyof typeof type;
 
 /**
- * The one text component. Applies the Sora family + a type-scale variant so typography is
+ * The one text component. Applies the Inter family + a type-scale variant so typography is
  * consistent everywhere (no ad-hoc fontSize/weight per screen). Web analogue: a <Text as=...>
  * design-system primitive.
  */

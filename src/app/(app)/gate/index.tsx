@@ -9,14 +9,14 @@ import { useGateQueue, useLookupVisit, type MyVisit } from '@/features/gate/quer
 import { font, palette, radius, spacing } from '@/theme';
 
 const FILTERS = [
-  { label: 'Expected', status: 'approved' },
   { label: 'Pending', status: 'pending' },
-  { label: 'Inside', status: 'checked_in' },
+  { label: 'Approved', status: 'approved' },
+  { label: 'Checked In', status: 'checked_in' },
   { label: 'All', status: undefined },
 ];
 
 export default function GateScreen() {
-  const [filter, setFilter] = useState<string | undefined>('approved');
+  const [filter, setFilter] = useState<string | undefined>('pending');
   const [code, setCode] = useState('');
   const queue = useGateQueue(filter);
   const lookup = useLookupVisit();
