@@ -36,7 +36,13 @@
           }
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "onesignal-expo-plugin",
+        {
+          "mode": "development"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

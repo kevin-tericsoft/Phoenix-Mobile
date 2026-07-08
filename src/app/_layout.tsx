@@ -5,6 +5,7 @@ import { ActivityIndicator, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AuthProvider, useAuth } from '@/features/auth/auth-context';
+import { PushNotifications } from '@/features/notifications/push';
 import { queryClient } from '@/lib/query';
 import { palette, useAuroraFonts } from '@/theme';
 
@@ -27,14 +28,17 @@ function RootNavigator() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Protected guard={status === 'authenticated'}>
-        <Stack.Screen name="(app)" />
-      </Stack.Protected>
-      <Stack.Protected guard={status === 'unauthenticated'}>
-        <Stack.Screen name="(auth)" />
-      </Stack.Protected>
-    </Stack>
+    <>
+      <PushNotifications />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Protected guard={status === 'authenticated'}>
+          <Stack.Screen name="(app)" />
+        </Stack.Protected>
+        <Stack.Protected guard={status === 'unauthenticated'}>
+          <Stack.Screen name="(auth)" />
+        </Stack.Protected>
+      </Stack>
+    </>
   );
 }
 

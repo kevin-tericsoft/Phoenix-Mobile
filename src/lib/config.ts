@@ -18,3 +18,10 @@ const DEV_HOST = Platform.select({
 });
 
 export const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? DEV_HOST;
+
+/**
+ * OneSignal app id — public, safe to embed client-side (it's a target identifier, not a
+ * secret; the delivery-triggering REST API key stays server-only in Phoenix-API). Unset
+ * in dev by default: push is opt-in via env, same pattern as API_BASE_URL.
+ */
+export const ONESIGNAL_APP_ID = process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID;
